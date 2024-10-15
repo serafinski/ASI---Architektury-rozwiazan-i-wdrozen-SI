@@ -1,0 +1,5 @@
+numpy
+pandas
+faker
+gspread
+google-auth

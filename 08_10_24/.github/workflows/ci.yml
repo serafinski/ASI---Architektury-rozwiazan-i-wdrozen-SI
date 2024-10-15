@@ -1,0 +1,64 @@
+# .github/workflows/ci.yml
+
+name: CI Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      send_to_spreadsheets:
+        description: 'Czy wygenerować dane i wysłać je do Google SpreadSheets?'
+        required: true
+        default: 'nie'
+        type: choice
+        options:
+          - 'tak'
+          - 'nie'
+
+jobs:
+  run-generator:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout mojego repo
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Clone i kopiowanie skryptu z repo prowadzacego
+    - name: Clone external repository with generator script
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+      run: |
+        git clone https://$GITHUB_TOKEN@github.com/PJATK-ASI-2024/Lab2---Obr-bka-danych
+        cp Lab2---Obr-bka-danych/generator_danych.py ./
+
+    # Setup Python 3.9
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    # Instalacja dependencji
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    # Odpalenie generowania pliku
+    - name: Run generator script
+      if: inputs.send_to_spreadsheets == 'tak'
+      run: python generator_danych.py -s 24353
+
+    # Odpalenie skryptu wrzucającego arkusz
+    - name: Run upload script
+      if: inputs.send_to_spreadsheets == 'tak'
+      env:
+        GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+      run: python upload_csv.py
+
+    # Odpalenie skryptu czyszczącego i standaryzującego dane
+    - name: Run cleanup and standardization script
+      env:
+        GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+      run: python cleanup_and_standardization.py
+
+    # Wypisanie raportu
+    - name: Display report
+      run: cat report.txt
