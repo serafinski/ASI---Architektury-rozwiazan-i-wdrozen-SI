@@ -4,6 +4,5 @@ matplotlib
 seaborn
 scikit-learn
 statsmodels
-pycaret[analysis]
 pycaret[models]
-pycaret[tuner]
+flask

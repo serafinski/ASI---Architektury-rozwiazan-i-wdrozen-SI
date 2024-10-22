@@ -1,0 +1,121 @@
+# .github/workflows/ci.yml
+
+name: CI/CD Pipeline for ML Model Training and Docker Publish
+
+# Wykonuj akcje przy każdym pushu do gałęzi main
+on:
+  workflow_dispatch:
+    inputs:
+      build_and_publish:
+        description: "Czy chcesz zbudować i opublikować obraz Docker?"
+        required: true
+        type: choice
+        options:
+          - "tak"
+          - "nie"
+
+permissions:
+  contents: write
+
+jobs:
+  train-model:
+    runs-on: self-hosted
+
+    steps:
+      # Krok 1: Checkout repozytorium
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Krok 2: Usuń stare pliki graficzne, jeśli istnieją
+      - name: Remove old plots (if they exist)
+        run: |
+          rm -f histogram.png histogram_processed.png scatter_plots.png scatter_plots_processed.png distribution.png distribution_processed.png correlation_heatmap.png feature_importance.png learning_curve.png Residuals.png prediction_error.png cooks_distance.png
+
+      # Krok 3: Pobierz .csv'ke
+      - name: Download .csv file
+        run: |
+          curl -o CollegeDistance.csv https://vincentarelbundock.github.io/Rdatasets/csv/AER/CollegeDistance.csv
+
+      # Krok 4: Zainstaluj Python i zależności
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # Krok 5: Instalowanie Dependencji
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Krok 6: Uruchom analizę i wygeneruj wykresy
+      - name: Run analysis and generate plots
+        run: python eda.py
+
+      # Krok 7: Inżynieria cech i przygotowanie danych
+      - name: Feature Engineering and Data Preparation
+        run: python feature_engineering.py
+
+      # Krok 8: AutoML z PyCaret
+      - name: AutoML with PyCaret
+        run: python model_training.py
+
+      # Krok 9: Zapisz model jako artefakt — potrzebny do następnego kroku
+      - name: Save model.pkl as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-artifact
+          path: model.pkl
+
+      # Krok 10: Zaktualizuj README.md
+      - name: Update README.md
+        run: |
+          chmod +x update_readme.sh
+          bash update_readme.sh
+
+      # Krok 11: Push README.md
+      - name: Commit and push updates to README.md
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md histogram.png histogram_processed.png scatter_plots.png scatter_plots_processed.png distribution.png distribution_processed.png correlation_heatmap.png feature_importance.png learning_curve.png Residuals.png prediction_error.png cooks_distance.png --force
+          git commit -m "Auto update README.md"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-publish-image:
+    runs-on: self-hosted
+    needs: train-model
+    if: inputs.build_and_publish == 'tak'
+
+    steps:
+      # Krok 1: Checkout repozytorium
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Krok 2: Pobranie artefaktu
+      - name: Download model artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: model-artifact
+          path: .
+
+      # Krok 3: Logowanie do Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      # Krok 4: Zbudowanie obrazu Dockera
+      - name: Build Docker image
+        run: docker build -t ${{ vars.DOCKER_USERNAME }}/asi-04:${{ github.sha }} .
+
+      # Krok 5: Wypchnięcie obrazu do Docker Hub'a
+      - name: Push Docker image
+        run: docker push ${{ vars.DOCKER_USERNAME }}/asi-04:${{ github.sha }}
+          
+      # (Opcjonalnie) Krok 6: Oznaczenie obrazu jako "latest"
+      - name: Tag Docker image as latest
+        run: |
+          docker tag ${{ vars.DOCKER_USERNAME }}/asi-04:${{ github.sha }} ${{ vars.DOCKER_USERNAME }}/asi-04:latest
+          docker push ${{ vars.DOCKER_USERNAME }}/asi-04:latest

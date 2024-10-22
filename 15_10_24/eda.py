@@ -1,6 +1,7 @@
 import pandas as pd
 import logging
 from visualization import Visualization
+from markdown import MarkdownTableGenerator
 
 # Konfiguracja loggera
 logging.basicConfig(
@@ -30,6 +31,17 @@ missing_values = df.isnull().sum()
 missing_percentage = (missing_values / len(df)) * 100
 logger.info("\nProcent brakujących wartości w każdej kolumnie:")
 logger.info(missing_percentage)
+
+with open("missing.txt", "w") as f:
+    missing_description = pd.DataFrame({
+        'index': missing_values.index,
+        'Missing Values': missing_values.values,
+        'Missing Percentage': missing_percentage.values
+    })
+
+    # Generowanie tabeli markdown
+    table_generator = MarkdownTableGenerator(missing_description)
+    f.write(table_generator.generate_markdown_table())
 
 # Usunięcie kolumny 'rownames', ponieważ służy tylko do numeracji
 if 'rownames' in df.columns:
@@ -62,28 +74,17 @@ for col in ['gender', 'ethnicity', 'fcollege', 'mcollege', 'home', 'urban', 'inc
     logger.info(f"\nDystrybucja dla zmiennej {col}:")
     logger.info(df[col].value_counts())
 
-
-# Funkcja do generowania tabeli w formacie Markdown
-def generate_markdown_table(dataframe):
-    # Tworzenie nagłówka tabeli
-    markdown_table = '| ' + ' | '.join(dataframe.columns) + ' |\n'
-    markdown_table += '| ' + ' | '.join(['---'] * len(dataframe.columns)) + ' |\n'
-
-    # Tworzenie wierszy tabeli
-    for index, row in dataframe.iterrows():
-        markdown_table += '| ' + ' | '.join(row.astype(str)) + ' |\n'
-    return markdown_table
-
-
 # Zapisanie wyników analizy numerycznej w formacie Markdown (tabele)
 with open("pre_numeric_analysis.txt", "w") as f:
     numeric_description = df.describe().transpose()
-    f.write(generate_markdown_table(numeric_description.reset_index()))
+    table_generator = MarkdownTableGenerator(numeric_description.reset_index())
+    f.write(table_generator.generate_markdown_table())
 
 # Zapisanie wyników analizy kategorycznej w formacie Markdown (tabele)
 with open("pre_categorical_analysis.txt", "w") as f:
     categorical_description = df.describe(include=['object']).transpose()
-    f.write(generate_markdown_table(categorical_description.reset_index()))
+    table_generator = MarkdownTableGenerator(categorical_description.reset_index())
+    f.write(table_generator.generate_markdown_table())
 
 # Zapisanie rozkładu zmiennych kategorycznych w formacie Markdown
 with open("pre_categorical_distribution.txt", "w") as f:
@@ -91,5 +92,6 @@ with open("pre_categorical_distribution.txt", "w") as f:
         f.write(f"Dystrybucja dla zmiennej {col}:\n\n")
         value_counts = df[col].value_counts().reset_index()
         value_counts.columns = [col, 'count']
-        f.write(generate_markdown_table(value_counts))
+        table_generator = MarkdownTableGenerator(value_counts)
+        f.write(table_generator.generate_markdown_table())
         f.write("\n")

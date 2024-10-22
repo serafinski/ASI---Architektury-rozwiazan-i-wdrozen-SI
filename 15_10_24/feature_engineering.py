@@ -5,6 +5,7 @@ import seaborn as sns
 import statsmodels.api as sm
 import logging
 from visualization import Visualization
+from markdown import MarkdownTableGenerator
 
 # Konfiguracja loggera
 logging.basicConfig(
@@ -201,15 +202,6 @@ for col in categorical_columns:
         # Dla zmiennych, które nie mają mapowania (na wszelki wypadek)
         logger.info(df[col].value_counts())
 
-def generate_markdown_table(dataframe):
-    # Tworzenie nagłówka tabeli
-    markdown_table = '| ' + ' | '.join(dataframe.columns) + ' |\n'
-    markdown_table += '| ' + ' | '.join(['---'] * len(dataframe.columns)) + ' |\n'
-
-    # Tworzenie wierszy tabeli
-    for index, row in dataframe.iterrows():
-        markdown_table += '| ' + ' | '.join(row.astype(str)) + ' |\n'
-    return markdown_table
 
 # Lista zmiennych binarnych, które logicznie są kategoryczne
 binary_categorical_columns = ['gender', 'fcollege', 'mcollege', 'home', 'urban', 'income', 'region', 'hispanic', 'afam']
@@ -218,7 +210,8 @@ binary_categorical_columns = ['gender', 'fcollege', 'mcollege', 'home', 'urban',
 with open("post_numeric_analysis.txt", "w") as f:
     numeric_columns = ['score', 'unemp', 'wage', 'distance', 'tuition', 'education']
     numeric_description_after = df[numeric_columns].describe().transpose()
-    f.write(generate_markdown_table(numeric_description_after.reset_index()))
+    table_generator = MarkdownTableGenerator(numeric_description_after.reset_index())
+    f.write(table_generator.generate_markdown_table())
 
 with open("post_categorical_distribution.txt", "w") as f:
     # Eksploracja zmiennych kategorycznych
@@ -234,7 +227,8 @@ with open("post_categorical_distribution.txt", "w") as f:
             value_counts.columns = [col, 'count']
 
         # Tworzenie i zapisanie tabeli w formacie Markdown
-        f.write(generate_markdown_table(value_counts))
+        table_generator = MarkdownTableGenerator(value_counts)
+        f.write(table_generator.generate_markdown_table())
         f.write("\n")
 
 # Mapowanie wartości binarnych na etykiety przed analizą kategoryczną
@@ -246,4 +240,5 @@ for col in binary_categorical_columns:
 with open("post_categorical_analysis.txt", "w") as f:
     # Analiza kategoryczna
     categorical_description_after = df[binary_categorical_columns].astype('category').describe().transpose()
-    f.write(generate_markdown_table(categorical_description_after.reset_index()))
+    table_generator = MarkdownTableGenerator(categorical_description_after.reset_index())
+    f.write(table_generator.generate_markdown_table())
