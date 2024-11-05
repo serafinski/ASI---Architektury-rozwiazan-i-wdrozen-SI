@@ -1,0 +1,76 @@
+# .github/workflows/ci.yml
+
+name: Bank Marketing Workflow
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  tmp:
+    runs-on: self-hosted
+
+    steps:
+      # Krok 1: Sklonowanie repozytorium
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Krok 2: Usun stare pliki graficzne, jezeli istnieja
+      - name: Remove old plots (if they exist)
+        run: |
+          rm -f *.png
+
+      # Krok 3: Pobierz dane, rozpakuj je i usuń niepotrzebne pliki
+      - name: Download and unzip data
+        run: |
+          curl -o bank+marketing.zip https://archive.ics.uci.edu/static/public/222/bank+marketing.zip
+          unzip bank+marketing.zip
+          unzip bank-additional.zip
+          mv bank-additional/bank-additional-full.csv .
+          rm -rf bank+marketing.zip bank.zip __MACOSX bank-additional bank-additional.zip
+
+      # Krok 4: Setup Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10.15
+
+      # Krok 5: Instalacja Dependencji
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Krok 6: Wygenerowanie diagramu przepływu
+      - name: Generate workflow diagram
+        run: python flow_diagram.py
+
+      # Krok 7: Podzielenie zbioru danych na zbiór treningowy i testowy
+      - name: Split data
+        run: python split_data.py
+
+      # Krok 8: Update README.md
+      - name: Update README.md
+        run: |
+          chmod +x update_readme.sh
+          bash update_readme.sh
+
+      # Krok 9: Commit i push dla README.md
+      - name: Commit and push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md workflow_diagram.png --force
+          git commit -m "Auto update README.md"
+          git push
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # DEBUG - upload artefaktow
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: split-data
+          path: |
+            test_data.csv
+            train_data.csv
