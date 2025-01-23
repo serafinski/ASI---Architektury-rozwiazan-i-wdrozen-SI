@@ -1,0 +1,8 @@
+apache-airflow
+pandas
+scikit-learn
+gspread
+google-auth
+google-api-python-client
+pycaret[models]
+docker

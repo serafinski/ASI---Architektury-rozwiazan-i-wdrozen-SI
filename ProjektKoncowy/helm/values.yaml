@@ -1,0 +1,36 @@
+replicaCount: 1
+
+image:
+  repository: docker.io/serafinski/model-api
+  tag: "0.0.2"
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 5000
+  targetPort: 5000
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 768Mi
+  requests:
+    cpu: 500m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+containerPort: 5000
+
+# Ustawienia monitoringu
+monitoring:
+  enabled: true
+  namespace: monitoring

@@ -1,0 +1,8 @@
+matplotlib
+pandas
+scikit-learn
+seaborn
+ydata-profiling
+pycaret[models]
+dill
+flask

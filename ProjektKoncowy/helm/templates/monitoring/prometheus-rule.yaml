@@ -1,0 +1,21 @@
+{{- if .Values.monitoring.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "asi.fullname" . }}-health-rules
+  namespace: {{ .Values.monitoring.namespace }}
+  labels:
+    release: monitoring-stack
+spec:
+  groups:
+  - name: model-api.rules
+    rules:
+    - alert: ModelAPIDown
+      expr: probe_success{job="model-api-health"} == 0 or absent(probe_success{job="model-api-health"})
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Model API is down"
+        description: "The health check endpoint has been failing for more than 1 minute."
+{{- end }}

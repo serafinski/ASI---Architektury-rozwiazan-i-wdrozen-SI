@@ -1,0 +1,19 @@
+{{- if .Values.monitoring.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: {{ include "asi.fullname" . }}-health
+  namespace: {{ .Values.monitoring.namespace }}
+  labels:
+    release: monitoring-stack
+spec:
+  jobName: model-api-health
+  interval: 30s
+  module: http_2xx
+  prober:
+    url: blackbox-exporter-prometheus-blackbox-exporter.monitoring.svc.cluster.local:9115
+  targets:
+    staticConfig:
+      static:
+        - http://{{ include "asi.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:5000/health
+{{- end }}

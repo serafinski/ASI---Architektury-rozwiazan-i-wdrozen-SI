@@ -1,0 +1,43 @@
+name: Update README.md
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  tmp:
+    runs-on: self-hosted
+
+    steps:
+      # Krok 1: Sklonowanie repozytorium
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Krok 4: Setup Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10.15
+
+      # Krok 5: Instalacja Dependencji
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Krok 12: Update README.md
+      - name: Update README.md
+        run: |
+          chmod +x update_readme.sh
+          bash update_readme.sh
+
+      # Krok 13: Commit i push dla README.md
+      - name: Commit and push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md --force
+          git commit -m "Auto update README.md"
+          git push
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

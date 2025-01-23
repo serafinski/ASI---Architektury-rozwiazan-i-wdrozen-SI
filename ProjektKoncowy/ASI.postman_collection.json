@@ -1,0 +1,190 @@
+{
+	"info": {
+		"_postman_id": "3f283302-7963-4413-ae3e-78baefaea933",
+		"name": "ASI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40276061"
+	},
+	"item": [
+		{
+			"name": "Predict NO",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"age\": 56,\r\n    \"job\": \"housemaid\",\r\n    \"marital\": \"married\",\r\n    \"education\": \"basic.4y\",\r\n    \"default\": \"no\",\r\n    \"housing\": \"no\",\r\n    \"loan\": \"no\",\r\n    \"contact\": \"telephone\",\r\n    \"month\": \"may\",\r\n    \"day_of_week\": \"mon\",\r\n    \"duration\": 261,\r\n    \"campaign\": 1,\r\n    \"pdays\": 999,\r\n    \"previous\": 0,\r\n    \"poutcome\": \"nonexistent\",\r\n    \"emp.var.rate\": 1.1,\r\n    \"cons.price.idx\": 93.994,\r\n    \"cons.conf.idx\": -36.4,\r\n    \"euribor3m\": 4.857,\r\n    \"nr.employed\": 5191\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/predict",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"predict"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GCP NO",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"age\": 56,\r\n    \"job\": \"housemaid\",\r\n    \"marital\": \"married\",\r\n    \"education\": \"basic.4y\",\r\n    \"default\": \"no\",\r\n    \"housing\": \"no\",\r\n    \"loan\": \"no\",\r\n    \"contact\": \"telephone\",\r\n    \"month\": \"may\",\r\n    \"day_of_week\": \"mon\",\r\n    \"duration\": 261,\r\n    \"campaign\": 1,\r\n    \"pdays\": 999,\r\n    \"previous\": 0,\r\n    \"poutcome\": \"nonexistent\",\r\n    \"emp.var.rate\": 1.1,\r\n    \"cons.price.idx\": 93.994,\r\n    \"cons.conf.idx\": -36.4,\r\n    \"euribor3m\": 4.857,\r\n    \"nr.employed\": 5191\r\n}"
+				},
+				"url": {
+					"raw": "https://s24353-683779376482.europe-central2.run.app/predict",
+					"protocol": "https",
+					"host": [
+						"s24353-683779376482",
+						"europe-central2",
+						"run",
+						"app"
+					],
+					"path": [
+						"predict"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Predict YES",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"age\": 34,\r\n    \"job\": \"admin.\",\r\n    \"marital\": \"married\",\r\n    \"education\": \"university.degree\",\r\n    \"default\": \"no\",\r\n    \"housing\": \"yes\",\r\n    \"loan\": \"no\",\r\n    \"contact\": \"cellular\",\r\n    \"month\": \"jul\",\r\n    \"day_of_week\": \"thu\",\r\n    \"duration\": 417,\r\n    \"campaign\": 1,\r\n    \"pdays\": 6,\r\n    \"previous\": 3,\r\n    \"poutcome\": \"success\",\r\n    \"emp.var.rate\": -1.7,\r\n    \"cons.price.idx\": 94.215,\r\n    \"cons.conf.idx\": -40.3,\r\n    \"euribor3m\": 0.899,\r\n    \"nr.employed\": 4991.6\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/predict",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"predict"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GCP YES",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"age\": 34,\r\n    \"job\": \"admin.\",\r\n    \"marital\": \"married\",\r\n    \"education\": \"university.degree\",\r\n    \"default\": \"no\",\r\n    \"housing\": \"yes\",\r\n    \"loan\": \"no\",\r\n    \"contact\": \"cellular\",\r\n    \"month\": \"jul\",\r\n    \"day_of_week\": \"thu\",\r\n    \"duration\": 417,\r\n    \"campaign\": 1,\r\n    \"pdays\": 6,\r\n    \"previous\": 3,\r\n    \"poutcome\": \"success\",\r\n    \"emp.var.rate\": -1.7,\r\n    \"cons.price.idx\": 94.215,\r\n    \"cons.conf.idx\": -40.3,\r\n    \"euribor3m\": 0.899,\r\n    \"nr.employed\": 4991.6\r\n}"
+				},
+				"url": {
+					"raw": "https://s24353-683779376482.europe-central2.run.app/predict",
+					"protocol": "https",
+					"host": [
+						"s24353-683779376482",
+						"europe-central2",
+						"run",
+						"app"
+					],
+					"path": [
+						"predict"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Predict ERROR",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"age\": 86,\r\n    \"job\": \"retired\",\r\n    \"marital\": \"married\",\r\n    \"education\": \"unknown\",\r\n    \"default\": \"unknown\",\r\n    \"housing\": \"yes\",\r\n    \"loan\": \"yes\",\r\n    \"contact\": \"cellular\",\r\n    \"month\": \"sep\",\r\n    \"day_of_week\": \"tue\",\r\n    \"duration\": 211,\r\n    \"campaign\": 1,\r\n    \"pdays\": 7,\r\n    \"previous\": 4,\r\n    \"poutcome\": \"success\",\r\n    \"emp.var.rate\": -1.1,\r\n    \"cons.price.idx\": 94.199,\r\n    \"cons.conf.idx\": -37.5,\r\n    \"euribor3m\": 0.877,\r\n    \"nr.employed\": 4963.6\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/predict",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"predict"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GCP ERROR",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"age\": 86,\r\n    \"job\": \"retired\",\r\n    \"marital\": \"married\",\r\n    \"education\": \"unknown\",\r\n    \"default\": \"unknown\",\r\n    \"housing\": \"yes\",\r\n    \"loan\": \"yes\",\r\n    \"contact\": \"cellular\",\r\n    \"month\": \"sep\",\r\n    \"day_of_week\": \"tue\",\r\n    \"duration\": 211,\r\n    \"campaign\": 1,\r\n    \"pdays\": 7,\r\n    \"previous\": 4,\r\n    \"poutcome\": \"success\",\r\n    \"emp.var.rate\": -1.1,\r\n    \"cons.price.idx\": 94.199,\r\n    \"cons.conf.idx\": -37.5,\r\n    \"euribor3m\": 0.877,\r\n    \"nr.employed\": 4963.6\r\n}"
+				},
+				"url": {
+					"raw": "https://s24353-683779376482.europe-central2.run.app/predict",
+					"protocol": "https",
+					"host": [
+						"s24353-683779376482",
+						"europe-central2",
+						"run",
+						"app"
+					],
+					"path": [
+						"predict"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
